@@ -11,6 +11,7 @@ A Rails 8.1 music platform featuring a REST API for releases management, with a 
 - [Query Optimization & N+1 Prevention](#-query-optimization--n1-prevention)
 - [Separation of Concerns](#-separation-of-concerns)
 - [API Documentation](#-api-documentation)
+  - [Built-in HTTP Client & API Explorer](#built-in-http-client--api-explorer)
 - [Environment Configuration](#-environment-configuration)
 - [Running Tests](#-running-tests)
 - [Trade-offs & Decisions](#-trade-offs--decisions)
@@ -390,6 +391,49 @@ curl -H "Authorization: Bearer <token>" http://localhost:8080/api/releases?past=
 # Search releases
 curl -H "Authorization: Bearer <token>" http://localhost:8080/api/releases?search=thriller
 ```
+
+### Built-in HTTP Client & API Explorer
+
+The application includes a custom HTTP client (`Api::HttpClient`) and an interactive API Explorer UI, built specifically for demonstrating and testing the assessment API requirements.
+
+#### Why Build a Custom HTTP Client?
+
+Rather than using external tools like Postman or curl for API testing, we built an in-browser API Explorer that:
+
+1. **Demonstrates Technical Proficiency** - Shows understanding of HTTP fundamentals, headers, and API authentication
+2. **Provides Instant Feedback** - Test the API directly from the web interface without switching tools
+3. **Simplifies Reviewer Experience** - No need to set up external tools or copy tokens manually
+4. **Documents by Example** - The UI itself serves as interactive API documentation
+
+#### How It Works
+
+The `Api::HttpClient` is a lightweight Ruby HTTP client that:
+
+```ruby
+# Located at: app/services/api/http_client.rb
+module Api
+  class HttpClient
+    def get(url, headers: {})
+      # Makes HTTP GET requests with proper headers
+      # Returns parsed JSON response with status
+    end
+  end
+end
+```
+
+The API Explorer allows you to:
+- Select filter options (all/past/upcoming releases)
+- Adjust pagination (limit, page)
+- See the generated API URL in real-time
+- Execute requests and view formatted JSON responses
+- Observe response headers and status codes
+
+#### Accessing the API Explorer
+
+1. Log in to the application
+2. Navigate to **http://localhost:8080/profile**
+3. Use the interactive form to test different API parameters
+4. View the raw JSON response and pagination metadata
 
 ---
 

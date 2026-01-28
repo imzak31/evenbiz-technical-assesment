@@ -10,21 +10,11 @@
 
   <div>
     <%= form.label :release_id, "Release", class: "block text-sm font-medium text-gray-700" %>
-    <%# On edit: include current release; on new after validation failure: include selected release %>
-    <% 
-      releases_without_album = Release.left_joins(:album).where(albums: { id: nil })
-      available_releases = if album.release_id.present?
-        # Include the currently selected release (for edit or validation failure scenarios)
-        Release.where(id: [album.release_id] + releases_without_album.pluck(:id)).distinct
-      else
-        releases_without_album
-      end
-    %>
-    <%= form.collection_select :release_id, available_releases.order(released_at: :desc), :id, :name, 
+    <%= form.collection_select :release_id, @available_releases, :id, :name, 
         { prompt: "Select a release" },
         class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
         data: { album_form_target: "release", action: "change->album-form#releaseChanged" } %>
-    <p class="mt-1 text-xs text-gray-500">Only releases without an album are shown</p>
+    <p class="mt-1 text-xs text-gray-500">Shows available releases (and current release when editing)</p>
   </div>
 
   <div data-album-form-target="artistContainer">
@@ -46,7 +36,7 @@
 
   <div>
     <%= form.label :cover, "Album Cover", class: "block text-sm font-medium text-gray-700" %>
-    <% if album.persisted? && album.cover&.attached? %>
+    <% if album.cover.attached? %>
       <div class="mt-2 flex items-center gap-4">
         <%= image_tag album.cover, class: "h-20 w-20 rounded-lg object-cover" %>
         <div class="text-sm text-gray-500">Current cover</div>

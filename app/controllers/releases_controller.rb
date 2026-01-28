@@ -19,7 +19,7 @@ class ReleasesController < ApplicationController
         render json: {
           id: @release.id,
           name: @release.name,
-          artists: @release.artists.select(:id, :name).map { |a| { id: a.id, name: a.name } },
+          artists: @release.artists.map { |a| { id: a.id, name: a.name } },
         }
       end
     end

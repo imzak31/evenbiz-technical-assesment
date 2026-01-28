@@ -89,7 +89,7 @@ RSpec.describe "Albums" do
         }.to change(Album, :count).by(1)
       end
 
-      it "redirects to albums index" do
+      it "redirects to the created album" do
         artist = create(:artist)
         release = create(:release)
         valid_params = {
@@ -103,7 +103,7 @@ RSpec.describe "Albums" do
 
         post albums_path, params: valid_params
 
-        expect(response).to redirect_to(albums_path)
+        expect(response).to redirect_to(album_path(Album.last))
       end
     end
 
