@@ -103,7 +103,7 @@ RSpec.describe "Albums" do
 
         post albums_path, params: valid_params
 
-        expect(response).to redirect_to(albums_path)
+        expect(response).to redirect_to(album_path(Album.last))
       end
     end
 

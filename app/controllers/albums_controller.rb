@@ -26,7 +26,7 @@ class AlbumsController < ApplicationController
     @album = Album.new(album_params)
 
     if @album.save
-      redirect_to albums_path, notice: "Album was successfully created.", status: :see_other
+      redirect_to @album, notice: "Album was successfully created.", status: :see_other
     else
       set_available_releases
       render :new, status: :unprocessable_entity
