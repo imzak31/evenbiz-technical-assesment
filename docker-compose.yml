@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: evenbiz_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-evenbiz_technical_assesment_development}
+    ports:
+      - "${POSTGRES_PORT:-54322}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-evenbiz_technical_assesment_development}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: evenbiz_web
+    restart: unless-stopped
+    ports:
+      - "${RAILS_PORT:-8080}:8080"
+    environment:
+      - RAILS_ENV=${RAILS_ENV:-development}
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-evenbiz_technical_assesment_development}
+      - POSTGRES_PORT=5432
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-development_secret_key_base_at_least_64_bytes_long_for_security}
+      - RAILS_MASTER_KEY=${RAILS_MASTER_KEY:-}
+      - BINDING=0.0.0.0
+    volumes:
+      - .:/rails:cached
+      - bundle_cache:/usr/local/bundle
+      - node_modules_cache:/rails/node_modules
+      - rails_storage:/rails/storage
+      - rails_tmp:/rails/tmp
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+  bundle_cache:
+  node_modules_cache:
+  rails_storage:
+  rails_tmp:

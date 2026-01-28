@@ -1,0 +1,75 @@
+# syntax=docker/dockerfile:1
+
+# Development Dockerfile for Rails application
+# Optimized for docker compose build && docker compose up workflow
+
+ARG RUBY_VERSION=4.0.1
+FROM docker.io/library/ruby:$RUBY_VERSION-slim
+
+# Install system dependencies including libvips for image processing
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    # Build essentials
+    build-essential \
+    git \
+    pkg-config \
+    # PostgreSQL
+    libpq-dev \
+    postgresql-client \
+    # Node.js and npm
+    curl \
+    # Image processing (libvips for Active Storage variants)
+    libvips \
+    libvips-dev \
+    # YAML parsing
+    libyaml-dev \
+    # Process management
+    procps \
+    # Timezone data
+    tzdata \
+    && rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Install Node.js
+ARG NODE_VERSION=25.2.1
+ENV PATH=/usr/local/node/bin:$PATH
+RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    rm -rf /tmp/node-build-master
+
+# Install npm packages globally
+RUN npm install -g npm@latest
+
+# Set working directory
+WORKDIR /rails
+
+# Configure bundler for development
+ENV BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="" \
+    RAILS_ENV="development" \
+    NODE_ENV="development"
+
+# Copy dependency files first for better layer caching
+COPY Gemfile Gemfile.lock ./
+COPY package.json package-lock.json* ./
+COPY vendor ./vendor
+
+# Install Ruby dependencies
+RUN bundle install --jobs 4 --retry 3
+
+# Install Node.js dependencies
+RUN npm install
+
+# Copy the rest of the application
+COPY . .
+
+# Build CSS and JS assets
+RUN npm run build && npm run build:css
+
+# Create required directories
+RUN mkdir -p tmp/pids tmp/cache tmp/sockets log storage
+
+# Expose port 8080
+EXPOSE 8080
+
+# Default command - prepare DB and start Rails server
+CMD ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails db:prepare && bundle exec rails server -b 0.0.0.0 -p 8080"]
