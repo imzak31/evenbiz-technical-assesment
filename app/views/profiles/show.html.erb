@@ -27,7 +27,7 @@
             </div>
           </div>
           <div class="mt-4 text-center">
-            <h3 class="text-lg font-medium text-gray-900"><%= @user.email.split('@').first %></h3>
+            <h3 class="text-lg font-medium text-gray-900"><%= @user.full_name %></h3>
             <p class="text-sm text-gray-500"><%= @user.email %></p>
           </div>
         </div>
@@ -41,6 +41,10 @@
           <h3 class="text-lg font-medium text-gray-900">Account Details</h3>
         </div>
         <dl class="divide-y divide-gray-200">
+          <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-gray-500">Full name</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= @user.full_name %></dd>
+          </div>
           <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt class="text-sm font-medium text-gray-500">Email address</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= @user.email %></dd>
@@ -60,5 +64,10 @@
         </dl>
       </div>
     </div>
+  </div>
+
+  <!-- API Explorer Section -->
+  <div class="mt-8">
+    <%= render "shared/api_explorer" %>
   </div>
 </div>

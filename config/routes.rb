@@ -26,6 +26,9 @@ Rails.application.routes.draw do
   resources :albums
   resource :profile, only: [ :show, :edit, :update ]
 
+  # API Explorer (Ruby HTTP Client playground)
+  post "api_explorer/execute", to: "api_explorer#execute"
+
   # ==================
   # Root / Dashboard
   # ==================
