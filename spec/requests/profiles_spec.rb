@@ -73,7 +73,7 @@ RSpec.describe "Profiles" do
   end
 
   context "when not authenticated" do
-    before { sign_out user }
+    before { sign_out }
 
     it "redirects GET /profile to login" do
       get profile_path

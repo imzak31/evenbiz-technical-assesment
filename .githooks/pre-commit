@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Pre-commit hook to run CI checks locally
+# Ensures code quality before commits are made
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+echo ""
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Check if Docker is running
+if ! docker info > /dev/null 2>&1; then
+    echo -e "${RED}❌ Docker is not running. Please start Docker and try again.${NC}"
+    exit 1
+fi
+
+# Check if containers are up
+if ! docker compose ps --status running | grep -q "evenbiz_web"; then
+    echo -e "${YELLOW}⚠️  Web container not running. Starting containers...${NC}"
+    docker compose up -d
+    sleep 5
+fi
+
+# Run RuboCop
+echo -e "${YELLOW}📝 Running RuboCop...${NC}"
+if docker compose exec -T web bundle exec rubocop --parallel; then
+    echo -e "${GREEN}✅ RuboCop passed${NC}"
+else
+    echo -e "${RED}❌ RuboCop failed. Please fix the offenses before committing.${NC}"
+    exit 1
+fi
+
+echo ""
+
+# Run Brakeman
+echo -e "${YELLOW}🔒 Running Brakeman security scan...${NC}"
+if docker compose exec -T web bin/brakeman -q --no-pager; then
+    echo -e "${GREEN}✅ Brakeman passed${NC}"
+else
+    echo -e "${RED}❌ Brakeman found security issues. Please fix them before committing.${NC}"
+    exit 1
+fi
+
+echo ""
+
+# Run RSpec (only on changed spec files and their corresponding source files)
+echo -e "${YELLOW}🧪 Running RSpec tests...${NC}"
+if docker compose exec -T web bundle exec rspec --fail-fast; then
+    echo -e "${GREEN}✅ RSpec passed${NC}"
+else
+    echo -e "${RED}❌ RSpec tests failed. Please fix them before committing.${NC}"
+    exit 1
+fi
+
+echo ""
+echo -e "${GREEN}✅ All pre-commit checks passed!${NC}"

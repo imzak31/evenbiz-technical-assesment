@@ -7,7 +7,7 @@ module AuthenticationHelpers
   end
 
   # Sign out the current user
-  def sign_out(_user = nil)
+  def sign_out
     delete logout_path
   end
 end

@@ -69,7 +69,7 @@ RSpec.describe "Releases" do
     it "displays release details" do
       get release_path(release)
 
-      expect(response.body).to include(release.name)
+      expect(response.body).to include(CGI.escapeHTML(release.name))
     end
   end
 

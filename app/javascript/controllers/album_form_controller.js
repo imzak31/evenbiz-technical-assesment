@@ -28,7 +28,7 @@ export default class extends Controller {
     try {
       const response = await fetch(`/releases/${releaseId}.json`)
       if (!response.ok) {
-        console.error("Failed to fetch release")
+        this.showError("Failed to load artists for this release")
         return
       }
 
@@ -36,8 +36,9 @@ export default class extends Controller {
       const artistIds = release.artists?.map(a => a.id) || []
 
       if (artistIds.length === 0) {
-        // Release has no artists, show all
+        // Release has no artists, show all with warning
         this.showAllArtists()
+        this.updateHelperText(0)
         return
       }
 
@@ -45,6 +46,7 @@ export default class extends Controller {
       this.filterArtistOptions(artistIds)
     } catch (error) {
       console.error("Error fetching release artists:", error)
+      this.showError("Failed to load artists. Please refresh and try again.")
     }
   }
 
@@ -80,15 +82,27 @@ export default class extends Controller {
     this.updateHelperText(null)
   }
 
-  updateHelperText(count) {
-    if (!this.hasArtistContainerTarget) return
-
-    let helper = this.artistContainerTarget.querySelector(".artist-helper")
-    if (!helper) {
-      helper = document.createElement("p")
-      helper.className = "artist-helper mt-1 text-xs text-gray-500"
-      this.artistContainerTarget.appendChild(helper)
+  showError(message) {
+    this.showAllArtists()
+    const helper = this.getHelperElement()
+    if (helper) {
+      helper.textContent = message
+      helper.classList.add("text-red-500")
+      helper.classList.remove("text-gray-500")
     }
+  }
+
+  getHelperElement() {
+    if (!this.hasArtistContainerTarget) return null
+    return this.artistContainerTarget.querySelector(".artist-helper")
+  }
+
+  updateHelperText(count) {
+    const helper = this.getHelperElement()
+    if (!helper) return
+
+    helper.classList.remove("text-red-500")
+    helper.classList.add("text-gray-500")
 
     if (count === null) {
       helper.textContent = "Select a release first to filter artists"

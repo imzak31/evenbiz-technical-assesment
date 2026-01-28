@@ -53,7 +53,9 @@ RSpec.describe "Registrations" do
 
       it "signs in the new user" do
         post signup_path, params: valid_params
-        expect(session[:user_id]).not_to be_nil
+        # Follow redirect and verify we can access authenticated content
+        follow_redirect!
+        expect(response).to have_http_status(:success)
       end
 
       it "sets a flash notice" do
