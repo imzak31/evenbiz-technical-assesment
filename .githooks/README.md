@@ -4,7 +4,13 @@ This directory contains custom git hooks for the project.
 
 ## Setup
 
-The hooks are automatically configured when you clone the repository. If they're not working, run:
+Git hooks require manual configuration. Run the setup script which handles this automatically:
+
+```bash
+bin/setup
+```
+
+Or configure manually:
 
 ```bash
 git config core.hooksPath .githooks

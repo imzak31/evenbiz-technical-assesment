@@ -20,11 +20,25 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-# Check if containers are up
+# Check if containers are up and wait for them to be healthy
 if ! docker compose ps --status running | grep -q "evenbiz_web"; then
     echo -e "${YELLOW}⚠️  Web container not running. Starting containers...${NC}"
-    docker compose up -d
-    sleep 5
+    docker compose up -d --wait
+    
+    # Fallback: poll for container readiness if --wait not supported
+    if [ $? -ne 0 ]; then
+        docker compose up -d
+        echo -e "${YELLOW}Waiting for containers to be ready...${NC}"
+        retries=30
+        until docker compose exec -T web echo "ready" > /dev/null 2>&1 || [ $retries -eq 0 ]; do
+            retries=$((retries - 1))
+            sleep 1
+        done
+        if [ $retries -eq 0 ]; then
+            echo -e "${RED}❌ Containers failed to start. Please check docker compose logs.${NC}"
+            exit 1
+        fi
+    fi
 fi
 
 # Run RuboCop
@@ -49,7 +63,7 @@ fi
 
 echo ""
 
-# Run RSpec (only on changed spec files and their corresponding source files)
+# Run the full RSpec test suite
 echo -e "${YELLOW}🧪 Running RSpec tests...${NC}"
 if docker compose exec -T web bundle exec rspec --fail-fast; then
     echo -e "${GREEN}✅ RSpec passed${NC}"
