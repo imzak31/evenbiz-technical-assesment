@@ -5,6 +5,7 @@
 import { application } from "./application"
 
 import AlbumToggleController from "./album_toggle_controller"
+import ConfirmController from "./confirm_controller"
 import DropdownController from "./dropdown_controller"
 import FlashController from "./flash_controller"
 import FormController from "./form_controller"
@@ -12,6 +13,7 @@ import ModalController from "./modal_controller"
 import SearchController from "./search_controller"
 
 application.register("album-toggle", AlbumToggleController)
+application.register("confirm", ConfirmController)
 application.register("dropdown", DropdownController)
 application.register("flash", FlashController)
 application.register("form", FormController)

@@ -11,7 +11,7 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body class="h-full">
+  <body class="h-full" data-controller="confirm">
     <div class="min-h-full">
       <%= render "shared/navbar" %>
 
@@ -24,5 +24,8 @@
         </div>
       </main>
     </div>
+
+    <%# Custom confirmation dialog %>
+    <%= render "shared/confirm_dialog" %>
   </body>
 </html>
