@@ -13,10 +13,15 @@ class Release < ApplicationRecord
   # ==================
 
   # Eager loads all associations needed for index/list serialization
-  scope :for_index, -> { includes(:album, :artists).order(released_at: :desc) }
+  # Includes attachments (cover, logo) to avoid N+1 queries
+  # Orders by released_at desc, then by name for deterministic ordering
+  scope :for_index, lambda {
+    includes(album: { cover_attachment: :blob }, artists: { logo_attachment: :blob })
+      .order(released_at: :desc, name: :asc)
+  }
 
   # Eager loads associations for detailed serialization
-  scope :for_show, -> { includes(album: :artist, artists: {}) }
+  scope :for_show, -> { includes(album: [ :cover_attachment, :artist ], artists: :logo_attachment) }
 
   # Filter by artist participation (primary or featured)
   scope :for_artist, ->(artist_id) { joins(:artist_releases).where(artist_releases: { artist_id: artist_id }) }

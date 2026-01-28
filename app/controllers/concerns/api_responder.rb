@@ -15,12 +15,21 @@ module ApiResponder
 
     body[:meta] = result.meta.to_h if result.meta
 
-    render json: body, status: status
+    render_json(body, status: status)
   end
 
   # Renders a failure service result
   def render_failure(result, status: :unprocessable_entity)
-    render json: { errors: result.errors }, status: status
+    render_json({ errors: result.errors }, status: status)
+  end
+
+  # Renders JSON with pretty formatting in development
+  def render_json(body, status:)
+    if Rails.env.development?
+      render json: JSON.pretty_generate(body), status: status
+    else
+      render json: body, status: status
+    end
   end
 
   # Convenience method for service result handling

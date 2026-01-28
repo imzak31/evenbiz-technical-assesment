@@ -15,7 +15,7 @@ module Api
 
     def permitted_params_mapping
       {
-        index: pagination_params + [:past],
+        index: pagination_params + [ :past ],
       }
     end
   end

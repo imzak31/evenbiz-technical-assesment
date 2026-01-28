@@ -27,6 +27,6 @@ class BaseService
       per_page: paginated.limit_value,
     )
 
-    [paginated, meta]
+    [ paginated, meta ]
   end
 end

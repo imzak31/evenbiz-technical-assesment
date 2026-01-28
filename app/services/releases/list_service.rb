@@ -49,7 +49,7 @@ module Releases
       limit_int = limit.to_i
       return DEFAULT_PER_PAGE if limit_int <= 0
 
-      [limit_int, MAX_PER_PAGE].min
+      [ limit_int, MAX_PER_PAGE ].min
     end
   end
 end
