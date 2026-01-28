@@ -1,3 +1,13 @@
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="256" cy="256" r="256" fill="red"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with indigo gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="256" fill="url(#bgGradient)"/>
+  
+  <!-- Centered music note icon -->
+  <path fill="white" d="M336 96v240c0 35.3-28.7 64-64 64s-64-28.7-64-64s28.7-64 64-64c11.7 0 22.7 3.1 32 8.6V160l-128 32v176c0 35.3-28.7 64-64 64s-64-28.7-64-64s28.7-64 64-64c11.7 0 22.7 3.1 32 8.6V128l192-48v16z" transform="translate(96, 32)"/>
 </svg>
