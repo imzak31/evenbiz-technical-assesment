@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_28_002708) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_28_004250) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -48,6 +48,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_28_002708) do
     t.datetime "released_at", null: false
     t.datetime "updated_at", null: false
     t.index ["released_at"], name: "index_releases_on_released_at"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "api_token", limit: 64, null: false
+    t.datetime "created_at", null: false
+    t.string "email", limit: 255, null: false
+    t.string "first_name", limit: 100, null: false
+    t.string "last_name", limit: 100, null: false
+    t.string "password_digest", null: false
+    t.string "profile_picture_url", limit: 2048
+    t.datetime "updated_at", null: false
+    t.index ["api_token"], name: "index_users_on_api_token", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "albums", "artists"

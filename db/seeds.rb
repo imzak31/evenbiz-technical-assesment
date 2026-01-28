@@ -11,8 +11,21 @@ ArtistRelease.destroy_all
 Album.destroy_all
 Release.destroy_all
 Artist.destroy_all
+User.destroy_all
 
 puts "  ✓ Cleared existing data"
+
+# Create test user with known API token for development
+test_user = User.create!(
+  email: "admin@evenbiz.test",
+  first_name: "Admin",
+  last_name: "User",
+  password: "password123",
+  password_confirmation: "password123",
+)
+
+puts "  ✓ Created test user: #{test_user.full_name} (#{test_user.email})"
+puts "    API Token: #{test_user.api_token}"
 
 # Create 25 artists with unique names
 artists = 25.times.map do |i|
@@ -80,6 +93,7 @@ puts "  ✓ Created #{artist_releases_count} artist-release associations"
 
 puts "🎵 Seeding complete!"
 puts "   Summary:"
+puts "   - #{User.count} users"
 puts "   - #{Artist.count} artists"
 puts "   - #{Release.count} releases (#{Release.past.count} past, #{Release.upcoming.count} upcoming)"
 puts "   - #{Album.count} albums"
