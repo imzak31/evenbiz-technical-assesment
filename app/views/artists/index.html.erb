@@ -17,6 +17,14 @@
     </div>
   </div>
 
+  <!-- Search Bar -->
+  <div class="flex items-center gap-4">
+    <%= render "shared/search_bar", url: artists_path, placeholder: "Search artists by name...", value: @search_query %>
+    <% if @search_query.present? %>
+      <span class="text-sm text-gray-500"><%= @artists.total_count %> result(s)</span>
+    <% end %>
+  </div>
+
   <!-- Grid -->
   <div id="artists" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     <%= render @artists %>

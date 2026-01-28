@@ -6,7 +6,11 @@ class ArtistsController < ApplicationController
   before_action :set_artist, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @artists = Artist.for_index.page(params[:page]).per(12)
+    base_scope = Artist.for_index
+    results = Search::ArtistsSearch.new(base_scope).call(params[:q])
+    # When searching, show all results; otherwise paginate
+    @artists = params[:q].present? ? results.page(params[:page]).per(100) : results.page(params[:page]).per(12)
+    @search_query = params[:q]
   end
 
   def show; end

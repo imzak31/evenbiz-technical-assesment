@@ -17,6 +17,14 @@
     </div>
   </div>
 
+  <!-- Search Bar -->
+  <div class="flex items-center gap-4">
+    <%= render "shared/search_bar", url: releases_path, placeholder: "Search releases or artists...", value: @search_query %>
+    <% if @search_query.present? %>
+      <span class="text-sm text-gray-500"><%= @releases.total_count %> result(s)</span>
+    <% end %>
+  </div>
+
   <!-- Table -->
   <div class="bg-white shadow rounded-lg overflow-hidden">
     <table class="min-w-full divide-y divide-gray-200">

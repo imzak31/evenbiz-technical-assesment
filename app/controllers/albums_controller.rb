@@ -4,7 +4,11 @@ class AlbumsController < ApplicationController
   before_action :set_album, only: %i[show edit update destroy]
 
   def index
-    @albums = Album.for_index.page(params[:page]).per(12)
+    base_scope = Album.for_index
+    results = Search::AlbumsSearch.new(base_scope).call(params[:q])
+    # When searching, show all results; otherwise paginate
+    @albums = params[:q].present? ? results.page(params[:page]).per(100) : results.page(params[:page]).per(12)
+    @search_query = params[:q]
   end
 
   def show; end

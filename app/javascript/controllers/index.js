@@ -9,9 +9,11 @@ import DropdownController from "./dropdown_controller"
 import FlashController from "./flash_controller"
 import FormController from "./form_controller"
 import ModalController from "./modal_controller"
+import SearchController from "./search_controller"
 
 application.register("album-toggle", AlbumToggleController)
 application.register("dropdown", DropdownController)
 application.register("flash", FlashController)
 application.register("form", FormController)
 application.register("modal", ModalController)
+application.register("search", SearchController)
