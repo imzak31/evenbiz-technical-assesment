@@ -1,68 +1,215 @@
 <div class="space-y-8">
-  <!-- Header -->
-  <div class="md:flex md:items-center md:justify-between">
-    <div class="min-w-0 flex-1">
-      <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-        Welcome back, <%= current_user.first_name %>!
+  <!-- Header with gradient accent -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 p-8 shadow-xl">
+    <div class="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))]"></div>
+    <div class="relative">
+      <h1 class="text-3xl font-bold text-white sm:text-4xl">
+        Welcome back, <%= current_user.first_name %>! 👋
       </h1>
+      <p class="mt-2 text-indigo-100">Here's what's happening with your music catalog today.</p>
     </div>
+    <!-- Decorative circles -->
+    <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
+    <div class="absolute -bottom-10 -right-20 h-60 w-60 rounded-full bg-pink-500/20 blur-3xl"></div>
   </div>
 
-  <!-- Stats -->
-  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-    <%= render "shared/stat_card", title: "Artists", value: @stats[:artists], icon: "users", color: "indigo" %>
-    <%= render "shared/stat_card", title: "Releases", value: @stats[:releases], icon: "music", color: "green" %>
-    <%= render "shared/stat_card", title: "Albums", value: @stats[:albums], icon: "album", color: "purple" %>
-    <%= render "shared/stat_card", title: "Users", value: @stats[:users], icon: "person", color: "orange" %>
+  <!-- Stats with animations -->
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <%= render "dashboard/animated_stat_card", 
+        title: "Total Artists", 
+        value: @stats[:artists], 
+        icon: "users", 
+        color: "indigo",
+        trend: "+12%",
+        trend_up: true,
+        link: artists_path %>
+    <%= render "dashboard/animated_stat_card", 
+        title: "Total Releases", 
+        value: @stats[:releases], 
+        icon: "music", 
+        color: "emerald",
+        trend: "+8%",
+        trend_up: true,
+        link: releases_path %>
+    <%= render "dashboard/animated_stat_card", 
+        title: "Total Albums", 
+        value: @stats[:albums], 
+        icon: "album", 
+        color: "violet",
+        trend: "+15%",
+        trend_up: true,
+        link: albums_path %>
+    <%= render "dashboard/animated_stat_card", 
+        title: "Team Members", 
+        value: @stats[:users], 
+        icon: "person", 
+        color: "amber",
+        trend: "Stable",
+        trend_up: nil,
+        link: nil %>
   </div>
 
-  <!-- Recent Releases -->
-  <div class="bg-white shadow rounded-lg">
-    <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-      <div class="flex items-center justify-between">
-        <h3 class="text-lg font-medium leading-6 text-gray-900">Recent Releases</h3>
-        <%= link_to "View all", releases_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
-      </div>
-    </div>
-    <ul class="divide-y divide-gray-200">
-      <% @recent_releases.each do |release| %>
-        <li>
-          <%= link_to release_path(release), class: "block hover:bg-gray-50" do %>
-            <div class="px-4 py-4 sm:px-6">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center min-w-0">
-                  <% if release.album&.cover&.attached? %>
-                    <%= image_tag release.album.cover.variant(resize_to_fill: [48, 48]),
-                        class: "h-12 w-12 rounded-lg object-cover" %>
-                  <% else %>
-                    <div class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
-                      <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                      </svg>
-                    </div>
-                  <% end %>
-                  <div class="ml-4 truncate">
-                    <p class="truncate text-sm font-medium text-indigo-600"><%= release.name %></p>
-                    <p class="text-sm text-gray-500">
-                      <%= release.artists.map(&:name).to_sentence(last_word_connector: " & ") %>
-                    </p>
-                  </div>
-                </div>
-                <div class="ml-2 flex-shrink-0">
-                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= release.released_at.future? ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' %>">
-                    <%= release.released_at.future? ? 'Upcoming' : 'Released' %>
-                  </span>
-                </div>
+  <!-- Two-column layout for upcoming and recent -->
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <!-- Upcoming Releases -->
+    <div class="group relative overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5 transition-all duration-300 hover:shadow-xl">
+      <div class="absolute inset-0 bg-gradient-to-br from-yellow-50 to-orange-50 opacity-50"></div>
+      <div class="relative p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-orange-500/30">
+              <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Upcoming Releases</h3>
+              <p class="text-sm text-gray-500">Coming soon to your catalog</p>
+            </div>
+          </div>
+          <%= link_to releases_path, class: "text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors" do %>
+            View all →
+          <% end %>
+        </div>
+        
+        <div class="space-y-3">
+          <% @upcoming_releases.each_with_index do |release, index| %>
+            <%= render "dashboard/release_row", release: release, index: index, upcoming: true %>
+          <% end %>
+          <% if @upcoming_releases.empty? %>
+            <div class="py-8 text-center">
+              <div class="mx-auto h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center mb-3">
+                <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
               </div>
+              <p class="text-gray-500">No upcoming releases</p>
+              <%= link_to "Schedule one", new_release_path, class: "text-orange-600 hover:text-orange-700 font-medium", data: { turbo_frame: "modal" } %>
             </div>
           <% end %>
-        </li>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Releases -->
+    <div class="group relative overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5 transition-all duration-300 hover:shadow-xl">
+      <div class="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 opacity-50"></div>
+      <div class="relative p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/30">
+              <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Recent Releases</h3>
+              <p class="text-sm text-gray-500">Latest additions to your catalog</p>
+            </div>
+          </div>
+          <%= link_to releases_path, class: "text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors" do %>
+            View all →
+          <% end %>
+        </div>
+        
+        <div class="space-y-3">
+          <% @past_releases.each_with_index do |release, index| %>
+            <%= render "dashboard/release_row", release: release, index: index, upcoming: false %>
+          <% end %>
+          <% if @past_releases.empty? %>
+            <div class="py-8 text-center">
+              <div class="mx-auto h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
+                <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+              <p class="text-gray-500">No releases yet</p>
+              <%= link_to "Create one", new_release_path, class: "text-emerald-600 hover:text-emerald-700 font-medium", data: { turbo_frame: "modal" } %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Artists -->
+  <div class="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-900/5">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 shadow-lg shadow-indigo-500/30">
+          <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Featured Artists</h3>
+          <p class="text-sm text-gray-500">Recently added to your roster</p>
+        </div>
+      </div>
+      <%= link_to artists_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors" do %>
+        View all →
       <% end %>
-      <% if @recent_releases.empty? %>
-        <li class="px-4 py-8 text-center text-gray-500">
-          No releases yet. <%= link_to "Create one", new_release_path, class: "text-indigo-600 hover:text-indigo-500" %>
-        </li>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+      <% @recent_artists.each_with_index do |artist, index| %>
+        <%= render "dashboard/artist_card", artist: artist, index: index %>
       <% end %>
-    </ul>
+      <% if @recent_artists.empty? %>
+        <div class="col-span-full py-8 text-center">
+          <p class="text-gray-500">No artists yet. <%= link_to "Add one", new_artist_path, class: "text-indigo-600 hover:text-indigo-700 font-medium", data: { turbo_frame: "modal" } %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <%= link_to new_artist_path, class: "group relative overflow-hidden rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl", data: { turbo_frame: "modal" } do %>
+      <div class="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
+      <div class="relative flex items-center gap-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold">Add New Artist</p>
+          <p class="text-sm text-white/80">Expand your roster</p>
+        </div>
+      </div>
+    <% end %>
+
+    <%= link_to new_release_path, class: "group relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl", data: { turbo_frame: "modal" } do %>
+      <div class="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
+      <div class="relative flex items-center gap-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold">Create Release</p>
+          <p class="text-sm text-white/80">Launch new music</p>
+        </div>
+      </div>
+    <% end %>
+
+    <%= link_to new_album_path, class: "group relative overflow-hidden rounded-xl bg-gradient-to-br from-violet-500 to-pink-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl", data: { turbo_frame: "modal" } do %>
+      <div class="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
+      <div class="relative flex items-center gap-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold">Add Album</p>
+          <p class="text-sm text-white/80">Build your catalog</p>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
+
+<%= turbo_frame_tag "modal" %>

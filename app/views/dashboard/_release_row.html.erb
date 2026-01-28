@@ -1,0 +1,75 @@
+<%# Release row for dashboard %>
+<%# locals: (release:, index:, upcoming:) %>
+<%= link_to release_path(release), 
+    class: "group flex items-center gap-4 rounded-xl p-3 transition-all duration-200 hover:bg-white/80 hover:shadow-md",
+    style: "animation: fadeInUp 0.3s ease-out #{index * 0.1}s both;",
+    data: { turbo_frame: "_top" } do %>
+  
+  <!-- Album cover with hover effect -->
+  <div class="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg">
+    <% if release.album&.cover&.attached? %>
+      <%= image_tag release.album.cover.variant(resize_to_fill: [56, 56]),
+          class: "h-full w-full object-cover" %>
+    <% else %>
+      <div class="flex h-full w-full items-center justify-center bg-gradient-to-br <%= upcoming ? 'from-yellow-400 to-orange-500' : 'from-emerald-400 to-teal-500' %>">
+        <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+        </svg>
+      </div>
+    <% end %>
+    
+    <!-- Play icon overlay -->
+    <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+      <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </div>
+  </div>
+  
+  <!-- Release info -->
+  <div class="min-w-0 flex-1">
+    <p class="truncate font-medium text-gray-900 transition-colors group-hover:text-indigo-600">
+      <%= release.name %>
+    </p>
+    <p class="truncate text-sm text-gray-500">
+      <%= release.artists.map(&:name).to_sentence(last_word_connector: " & ") %>
+    </p>
+  </div>
+  
+  <!-- Date/Status badge -->
+  <div class="flex-shrink-0">
+    <% if upcoming %>
+      <span class="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-100 to-orange-100 px-3 py-1 text-xs font-medium text-orange-700 ring-1 ring-inset ring-orange-600/20">
+        <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="4"/>
+        </svg>
+        <%= release.released_at.strftime("%b %d") %>
+      </span>
+    <% else %>
+      <span class="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <%= time_ago_in_words(release.released_at) %> ago
+      </span>
+    <% end %>
+  </div>
+  
+  <!-- Arrow indicator -->
+  <svg class="h-5 w-5 flex-shrink-0 text-gray-300 transition-all duration-200 group-hover:translate-x-1 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+  </svg>
+<% end %>
+
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

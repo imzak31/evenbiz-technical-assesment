@@ -9,6 +9,19 @@ class DashboardController < ApplicationController
       albums: Album.count,
       users: User.count,
     }
-    @recent_releases = Release.for_index.limit(5)
+
+    @upcoming_releases = Release.includes(:artists, album: { cover_attachment: :blob })
+                                .where("released_at > ?", Date.current)
+                                .order(released_at: :asc)
+                                .limit(5)
+
+    @past_releases = Release.includes(:artists, album: { cover_attachment: :blob })
+                            .where("released_at <= ?", Date.current)
+                            .order(released_at: :desc)
+                            .limit(5)
+
+    @recent_artists = Artist.includes(logo_attachment: :blob)
+                            .order(created_at: :desc)
+                            .limit(6)
   end
 end
