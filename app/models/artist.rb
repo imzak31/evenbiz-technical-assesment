@@ -5,6 +5,10 @@ class Artist < ApplicationRecord
   has_many :artist_releases, dependent: :destroy
   has_many :releases, through: :artist_releases
 
+  # Attachments (polymorphic via Active Storage)
+  has_one_attached :logo
+  has_one_attached :banner
+
   validates :name, presence: true, uniqueness: true, length: { maximum: 255 }
 
   # ==================
