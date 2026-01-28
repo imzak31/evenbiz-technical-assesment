@@ -26,7 +26,8 @@
     <div class="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/50 to-transparent">
       <div class="flex space-x-2">
         <%= link_to artist_path(artist),
-            class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50" do %>
+            class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50",
+            data: { turbo_frame: "_top" } do %>
           View
         <% end %>
         <%= link_to edit_artist_path(artist),
