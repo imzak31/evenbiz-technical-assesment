@@ -104,9 +104,6 @@ group :development, :test do
 end
 
 group :development do
-  # Add schema information to model/test/factory files
-  gem "annotate"
-
   # Help to kill N+1 queries and unused eager loading
   gem "bullet"
 
