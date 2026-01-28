@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html class="h-full bg-gray-100">
+<html class="h-full bg-gray-50">
   <head>
     <title><%= content_for(:title) || "EvenBiz" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -12,15 +11,19 @@
   </head>
 
   <body class="h-full">
-    <div class="min-h-full">
-      <%= render "shared/navbar" %>
+    <div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <h1 class="text-center text-3xl font-bold tracking-tight text-gray-900">
+          🎵 EvenBiz
+        </h1>
+      </div>
 
-      <main class="py-10">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <%= render "shared/flash" %>
           <%= yield %>
         </div>
-      </main>
+      </div>
     </div>
   </body>
 </html>

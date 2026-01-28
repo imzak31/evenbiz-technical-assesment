@@ -1,0 +1,22 @@
+<%# The container tag -%>
+<%= paginator.render do -%>
+  <nav class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0" role="navigation" aria-label="Pagination">
+    <div class="-mt-px flex w-0 flex-1">
+      <%= prev_page_tag unless current_page.first? %>
+    </div>
+    <div class="hidden md:-mt-px md:flex">
+      <% each_page do |page| -%>
+        <% if page.display_tag? -%>
+          <%= page_tag page %>
+        <% elsif !page.was_truncated? -%>
+          <%= gap_tag %>
+        <% end -%>
+      <% end -%>
+    </div>
+    <div class="-mt-px flex w-0 flex-1 justify-end">
+      <% unless current_page.out_of_range? %>
+        <%= next_page_tag unless current_page.last? %>
+      <% end %>
+    </div>
+  </nav>
+<% end -%>

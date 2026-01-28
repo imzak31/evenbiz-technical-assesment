@@ -1,0 +1,45 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Albums</h1>
+      <p class="mt-1 text-sm text-gray-500">Browse and manage your album collection</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <%= link_to new_album_path,
+          data: { turbo_frame: "modal" },
+          class: "inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500" do %>
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+        </svg>
+        Add Album
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Album Grid -->
+  <div id="albums" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <% @albums.each do |album| %>
+      <%= render album %>
+    <% end %>
+  </div>
+
+  <% if @albums.empty? %>
+    <div class="text-center py-12 bg-white rounded-lg shadow">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No albums</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by creating a new album.</p>
+    </div>
+  <% end %>
+
+  <!-- Pagination -->
+  <% if @albums.present? %>
+    <div class="mt-6">
+      <%= paginate @albums %>
+    </div>
+  <% end %>
+</div>
+
+<%= turbo_frame_tag "modal" %>

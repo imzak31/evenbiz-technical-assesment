@@ -1,0 +1,157 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <%= link_to releases_path, class: "text-gray-400 hover:text-gray-500" do %>
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+      <% end %>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @release.name %></h1>
+    </div>
+    <div class="flex items-center gap-2">
+      <%= link_to edit_release_path(@release), class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        Edit
+      <% end %>
+      <%= button_to release_path(@release), method: :delete,
+          class: "inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500",
+          form: { data: { turbo_confirm: "Are you sure you want to delete this release?" } } do %>
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        Delete
+      <% end %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Release Details -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Release Details</h3>
+        </div>
+        <dl class="divide-y divide-gray-200">
+          <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-gray-500">Name</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= @release.name %></dd>
+          </div>
+          <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-gray-500">Release Date</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+              <% if @release.released_at %>
+                <%= @release.released_at.strftime("%B %d, %Y") %>
+              <% else %>
+                <span class="text-gray-400">Not set</span>
+              <% end %>
+            </dd>
+          </div>
+          <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-gray-500">Status</dt>
+            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+              <% if @release.released_at && @release.released_at <= Date.current %>
+                <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                  Released
+                </span>
+              <% elsif @release.released_at %>
+                <span class="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+                  Upcoming
+                </span>
+              <% else %>
+                <span class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                  Draft
+                </span>
+              <% end %>
+            </dd>
+          </div>
+          <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-gray-500">Created</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= @release.created_at.strftime("%B %d, %Y at %I:%M %p") %></dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Artists -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Artists (<%= @release.artists.count %>)</h3>
+        </div>
+        <% if @release.artists.any? %>
+          <ul class="divide-y divide-gray-200">
+            <% @release.artists.each do |artist| %>
+              <li class="px-6 py-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                      <span class="text-sm font-medium text-white"><%= artist.name.first.upcase %></span>
+                    </div>
+                    <div class="ml-4">
+                      <p class="text-sm font-medium text-gray-900"><%= artist.name %></p>
+                      <p class="text-sm text-gray-500"><%= artist.releases.count %> releases</p>
+                    </div>
+                  </div>
+                  <%= link_to artist_path(artist), class: "text-indigo-600 hover:text-indigo-900 text-sm font-medium" do %>
+                    View →
+                  <% end %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="px-6 py-8 text-center">
+            <p class="text-sm text-gray-500">No artists associated with this release.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Sidebar - Album Info -->
+    <div class="space-y-6">
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Album</h3>
+        </div>
+        <% if @release.album %>
+          <div class="p-6">
+            <% if @release.album.cover&.attached? %>
+              <%= image_tag @release.album.cover, class: "w-full rounded-lg object-cover aspect-square" %>
+            <% else %>
+              <div class="w-full rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 aspect-square flex items-center justify-center">
+                <svg class="h-16 w-16 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+            <% end %>
+            <div class="mt-4 space-y-3">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Album Name</p>
+                <p class="mt-1 text-sm text-gray-900"><%= @release.album.name %></p>
+              </div>
+              <% if @release.album.duration_in_minutes.present? %>
+                <div>
+                  <p class="text-sm font-medium text-gray-500">Duration</p>
+                  <p class="mt-1 text-sm text-gray-900"><%= @release.album.duration_in_minutes %> minutes</p>
+                </div>
+              <% end %>
+              <%= link_to album_path(@release.album), class: "mt-4 inline-flex items-center text-sm text-indigo-600 hover:text-indigo-900 font-medium" do %>
+                View Album →
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <div class="px-6 py-8 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No album</h3>
+            <p class="mt-1 text-sm text-gray-500">This release has no album associated.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

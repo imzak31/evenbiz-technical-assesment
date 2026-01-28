@@ -1,0 +1,89 @@
+<%= form_with model: release, class: "space-y-6", data: { controller: "form", action: "submit->form#submit" } do |form| %>
+  <%= render "shared/form_errors", resource: release %>
+
+  <!-- Release Details -->
+  <div class="space-y-4">
+    <h4 class="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">Release Details</h4>
+    
+    <div>
+      <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :name, 
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+          placeholder: "Enter release name" %>
+    </div>
+
+    <div>
+      <%= form.label :released_at, "Release Date", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.date_field :released_at, 
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
+  </div>
+
+  <!-- Album Details (nested) -->
+  <div class="space-y-4">
+    <h4 class="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">Album Details</h4>
+    
+    <%= form.fields_for :album do |album_form| %>
+      <%= album_form.hidden_field :id if release.album&.persisted? %>
+      
+      <div class="space-y-4">
+        <div>
+          <%= album_form.label :name, "Album Name", class: "block text-sm font-medium text-gray-700" %>
+          <%= album_form.text_field :name, 
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+              placeholder: "Enter album name" %>
+        </div>
+
+        <div>
+          <%= album_form.label :duration_in_minutes, "Duration (minutes)", class: "block text-sm font-medium text-gray-700" %>
+          <%= album_form.number_field :duration_in_minutes, 
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+              min: 0,
+              placeholder: "e.g., 45" %>
+        </div>
+
+        <div>
+          <%= album_form.label :cover, "Album Cover", class: "block text-sm font-medium text-gray-700" %>
+          <% if release.album&.cover&.attached? %>
+            <div class="mt-2 flex items-center gap-4">
+              <%= image_tag release.album.cover, class: "h-20 w-20 rounded-lg object-cover" %>
+              <div class="text-sm text-gray-500">Current cover</div>
+            </div>
+          <% end %>
+          <%= album_form.file_field :cover, 
+              accept: "image/*",
+              class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Artists Selection -->
+  <div class="space-y-4">
+    <h4 class="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">Artists</h4>
+    
+    <div>
+      <p class="text-sm text-gray-500 mb-3">Select the artists for this release:</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto border border-gray-200 rounded-md p-3">
+        <% Artist.order(:name).each do |artist| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "release[artist_ids][]", artist.id, 
+                release.artist_ids.include?(artist.id),
+                id: "artist_#{artist.id}",
+                class: "rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" %>
+            <span class="text-gray-700 truncate"><%= artist.name %></span>
+          </label>
+        <% end %>
+      </div>
+      <%= hidden_field_tag "release[artist_ids][]", "" %>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+    <%= link_to "Cancel", releases_path, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    <%= form.submit release.persisted? ? "Update Release" : "Create Release",
+        class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed",
+        data: { form_target: "submit" } %>
+  </div>
+<% end %>

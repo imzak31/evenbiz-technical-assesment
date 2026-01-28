@@ -1,0 +1,68 @@
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="md:flex md:items-center md:justify-between">
+    <div class="min-w-0 flex-1">
+      <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+        Welcome back, <%= current_user.first_name %>!
+      </h1>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <%= render "shared/stat_card", title: "Artists", value: @stats[:artists], icon: "users", color: "indigo" %>
+    <%= render "shared/stat_card", title: "Releases", value: @stats[:releases], icon: "music", color: "green" %>
+    <%= render "shared/stat_card", title: "Albums", value: @stats[:albums], icon: "album", color: "purple" %>
+    <%= render "shared/stat_card", title: "Users", value: @stats[:users], icon: "person", color: "orange" %>
+  </div>
+
+  <!-- Recent Releases -->
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Recent Releases</h3>
+        <%= link_to "View all", releases_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+      </div>
+    </div>
+    <ul class="divide-y divide-gray-200">
+      <% @recent_releases.each do |release| %>
+        <li>
+          <%= link_to release_path(release), class: "block hover:bg-gray-50" do %>
+            <div class="px-4 py-4 sm:px-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center min-w-0">
+                  <% if release.album&.cover&.attached? %>
+                    <%= image_tag release.album.cover.variant(resize_to_fill: [48, 48]),
+                        class: "h-12 w-12 rounded-lg object-cover" %>
+                  <% else %>
+                    <div class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                      <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                      </svg>
+                    </div>
+                  <% end %>
+                  <div class="ml-4 truncate">
+                    <p class="truncate text-sm font-medium text-indigo-600"><%= release.name %></p>
+                    <p class="text-sm text-gray-500">
+                      <%= release.artists.map(&:name).to_sentence(last_word_connector: " & ") %>
+                    </p>
+                  </div>
+                </div>
+                <div class="ml-2 flex-shrink-0">
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= release.released_at.future? ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' %>">
+                    <%= release.released_at.future? ? 'Upcoming' : 'Released' %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+      <% if @recent_releases.empty? %>
+        <li class="px-4 py-8 text-center text-gray-500">
+          No releases yet. <%= link_to "Create one", new_release_path, class: "text-indigo-600 hover:text-indigo-500" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

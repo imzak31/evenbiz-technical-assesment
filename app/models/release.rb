@@ -5,6 +5,8 @@ class Release < ApplicationRecord
   has_many :artist_releases, dependent: :destroy
   has_many :artists, through: :artist_releases
 
+  accepts_nested_attributes_for :album, reject_if: :all_blank
+
   validates :name, presence: true, length: { maximum: 255 }
   validates :released_at, presence: true
 

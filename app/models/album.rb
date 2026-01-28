@@ -18,7 +18,8 @@ class Album < ApplicationRecord
   scope :for_embed, -> { select(:id, :name, :duration_in_minutes, :release_id) }
 
   # Eager loads associations for index listing
-  scope :for_index, -> { includes(:artist, :release).order(created_at: :desc) }
+  # Includes cover attachment to avoid N+1 queries on list views
+  scope :for_index, -> { includes(:artist, :release, cover_attachment: :blob).order(created_at: :desc) }
 
   # Filter by artist
   scope :for_artist, ->(artist_id) { where(artist_id: artist_id) }

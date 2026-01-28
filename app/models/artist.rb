@@ -19,7 +19,8 @@ class Artist < ApplicationRecord
   scope :for_embed, -> { select(:id, :name) }
 
   # Eager loads associations for index listing
-  scope :for_index, -> { includes(:releases).order(:name) }
+  # Includes logo attachment to avoid N+1 queries on list views
+  scope :for_index, -> { includes(:releases, logo_attachment: :blob).order(:name) }
 
   # Filter by release participation
   scope :for_release, ->(release_id) { joins(:artist_releases).where(artist_releases: { release_id: release_id }) }

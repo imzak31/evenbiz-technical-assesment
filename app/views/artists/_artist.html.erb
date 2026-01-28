@@ -1,0 +1,40 @@
+<%= turbo_frame_tag dom_id(artist) do %>
+  <div class="group relative overflow-hidden rounded-lg bg-white shadow hover:shadow-md transition-shadow">
+    <!-- Image -->
+    <div class="aspect-square overflow-hidden bg-gray-200">
+      <% if artist.logo.attached? %>
+        <%= image_tag artist.logo.variant(resize_to_fill: [400, 400]),
+            class: "h-full w-full object-cover group-hover:scale-105 transition-transform duration-200" %>
+      <% else %>
+        <div class="h-full w-full flex items-center justify-center">
+          <svg class="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
+          </svg>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Content -->
+    <div class="p-4">
+      <h3 class="font-semibold text-gray-900 truncate"><%= artist.name %></h3>
+      <p class="mt-1 text-sm text-gray-500">
+        <%= pluralize(artist.releases.count, 'release') %> · <%= pluralize(artist.albums.count, 'album') %>
+      </p>
+    </div>
+
+    <!-- Actions overlay -->
+    <div class="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/50 to-transparent">
+      <div class="flex space-x-2">
+        <%= link_to artist_path(artist),
+            class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50" do %>
+          View
+        <% end %>
+        <%= link_to edit_artist_path(artist),
+            class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50",
+            data: { turbo_frame: "modal" } do %>
+          Edit
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
