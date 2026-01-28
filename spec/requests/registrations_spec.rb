@@ -53,9 +53,12 @@ RSpec.describe "Registrations" do
 
       it "signs in the new user" do
         post signup_path, params: valid_params
-        # Follow redirect and verify we can access authenticated content
         follow_redirect!
+
+        # Verify we're authenticated by checking for user-specific content
         expect(response).to have_http_status(:success)
+        expect(response.body).to include("Test User")  # User's name in navbar
+        expect(response.body).to include("Sign out")   # Only visible when logged in
       end
 
       it "sets a flash notice" do
