@@ -1,4 +1,4 @@
-<%= form_with model: artist, class: "space-y-4", data: { controller: "form", turbo: true } do |f| %>
+<%= form_with model: artist, class: "space-y-4", data: { controller: "form", turbo: true, turbo_frame: "_top" } do |f| %>
   <%= render "shared/form_errors", resource: artist %>
 
   <div>

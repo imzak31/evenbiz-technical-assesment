@@ -23,10 +23,7 @@ class AlbumsController < ApplicationController
     @album = Album.new(album_params)
 
     if @album.save
-      respond_to do |format|
-        format.html { redirect_to albums_path, notice: "Album was successfully created." }
-        format.turbo_stream { flash.now[:notice] = "Album was successfully created." }
-      end
+      redirect_to albums_path, notice: "Album was successfully created.", status: :see_other
     else
       render :new, status: :unprocessable_entity
     end
@@ -34,10 +31,7 @@ class AlbumsController < ApplicationController
 
   def update
     if @album.update(album_params)
-      respond_to do |format|
-        format.html { redirect_to albums_path, notice: "Album was successfully updated." }
-        format.turbo_stream { flash.now[:notice] = "Album was successfully updated." }
-      end
+      redirect_to @album, notice: "Album was successfully updated.", status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -45,16 +39,16 @@ class AlbumsController < ApplicationController
 
   def destroy
     @album.destroy!
-    redirect_to albums_path, notice: "Album was successfully deleted."
+    redirect_to albums_path, notice: "Album was successfully deleted.", status: :see_other
   end
 
   private
 
   def set_album
-    @album = Album.find(params[:id])
+    @album = Album.includes(:artist, :release, cover_attachment: :blob).find(params[:id])
   end
 
   def album_params
-    params.require(:album).permit(:name, :duration_in_minutes, :artist_id, :cover)
+    params.require(:album).permit(:name, :duration_in_minutes, :artist_id, :release_id, :cover)
   end
 end

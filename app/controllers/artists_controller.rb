@@ -25,10 +25,7 @@ class ArtistsController < ApplicationController
     @artist = Artist.new(artist_params)
 
     if @artist.save
-      respond_to do |format|
-        format.html { redirect_to @artist, notice: "Artist was successfully created." }
-        format.turbo_stream { flash.now[:notice] = "Artist was successfully created." }
-      end
+      redirect_to @artist, notice: "Artist was successfully created.", status: :see_other
     else
       render :new, status: :unprocessable_entity
     end
@@ -36,24 +33,21 @@ class ArtistsController < ApplicationController
 
   def update
     if @artist.update(artist_params)
-      respond_to do |format|
-        format.html { redirect_to @artist, notice: "Artist was successfully updated." }
-        format.turbo_stream { flash.now[:notice] = "Artist was successfully updated." }
-      end
+      redirect_to @artist, notice: "Artist was successfully updated.", status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @artist.destroy
-    redirect_to artists_path, notice: "Artist was successfully deleted."
+    @artist.destroy!
+    redirect_to artists_path, notice: "Artist was successfully deleted.", status: :see_other
   end
 
   private
 
   def set_artist
-    @artist = Artist.find(params[:id])
+    @artist = Artist.includes(:releases, :albums, logo_attachment: :blob, banner_attachment: :blob).find(params[:id])
   end
 
   def artist_params

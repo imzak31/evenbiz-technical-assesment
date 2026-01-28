@@ -12,7 +12,18 @@ class ReleasesController < ApplicationController
     @search_query = params[:q]
   end
 
-  def show; end
+  def show
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: {
+          id: @release.id,
+          name: @release.name,
+          artists: @release.artists.select(:id, :name).map { |a| { id: a.id, name: a.name } },
+        }
+      end
+    end
+  end
 
   def new
     @release = Release.new
@@ -27,10 +38,7 @@ class ReleasesController < ApplicationController
     @release = Release.new(release_params)
 
     if @release.save
-      respond_to do |format|
-        format.html { redirect_to @release, notice: "Release was successfully created." }
-        format.turbo_stream { flash.now[:notice] = "Release was successfully created." }
-      end
+      redirect_to @release, notice: "Release was successfully created.", status: :see_other
     else
       render :new, status: :unprocessable_entity
     end
@@ -38,18 +46,15 @@ class ReleasesController < ApplicationController
 
   def update
     if @release.update(release_params)
-      respond_to do |format|
-        format.html { redirect_to @release, notice: "Release was successfully updated." }
-        format.turbo_stream { flash.now[:notice] = "Release was successfully updated." }
-      end
+      redirect_to @release, notice: "Release was successfully updated.", status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @release.destroy
-    redirect_to releases_path, notice: "Release was successfully deleted."
+    @release.destroy!
+    redirect_to releases_path, notice: "Release was successfully deleted.", status: :see_other
   end
 
   private
