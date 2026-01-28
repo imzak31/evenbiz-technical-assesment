@@ -18,6 +18,14 @@ module EvenbizTechnicalAssesment
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Custom autoload paths for our architecture layers
+    config.autoload_paths += %w[
+      #{config.root}/app/services
+      #{config.root}/app/responses
+      #{config.root}/app/types
+      #{config.root}/app/blueprints
+    ]
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
