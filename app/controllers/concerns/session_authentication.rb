@@ -52,7 +52,8 @@ module SessionAuthentication
   end
 
   def store_location
-    session[:return_to] = request.fullpath if request.get?
+    # Use get? || head? to handle HTTP verb confusion (HEAD is routed like GET)
+    session[:return_to] = request.fullpath if request.get? || request.head?
   end
 
   def redirect_back_or_default(default = root_path)
