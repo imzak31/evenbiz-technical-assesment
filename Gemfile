@@ -124,4 +124,7 @@ group :test do
 
   # One-liners for common Rails tests
   gem "shoulda-matchers"
+
+  # Mock HTTP requests for testing
+  gem "webmock"
 end
