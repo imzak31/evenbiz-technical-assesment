@@ -1,8 +1,126 @@
 # Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+inherit_gem:
+  rubocop-rails-omakase: rubocop.yml
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+require:
+  - rubocop-performance
+  - rubocop-rails
+plugins:
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.2
+  Exclude:
+    - 'db/schema.rb'
+    - 'vendor/**/*'
+    - 'node_modules/**/*'
+    - 'bin/**/*'
+    - 'storage/**/*'
+    - 'public/**/*'
+
+####################
+# Style & Layout
+####################
+
+# Enforce documentation for all classes and modules
+# Disabled for now to speed up development, enable if documentation is a detailed requirement
+Style/Documentation:
+  Enabled: false
+
+# Freeze string literals by default for performance and safety
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+# Prefer double quotes for consistency
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+# Use Ruby 1.9 hash syntax { key: value }
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+# Check for trailing commas in arguments (cleaner diffs)
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+# Check for trailing commas in array/hash literals (cleaner diffs)
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+# Ensure standard error output is used correctly
+Style/GlobalStdStream:
+  Enabled: true
+
+# Prefer brackets for simple arrays of symbols/words
+Style/SymbolArray:
+  EnforcedStyle: brackets
+Style/WordArray:
+  EnforcedStyle: brackets
+
+####################
+# Metrics (Complexity)
+####################
+# Set logic length to 120 (omakase default is often tight)
+Layout/LineLength:
+  Max: 120
+  AllowedPatterns: ['^#'] # Allow long comments
+
+Metrics/MethodLength:
+  Max: 15
+  CountComments: false
+
+Metrics/ClassLength:
+  Max: 150
+  CountComments: false
+
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/CyclomaticComplexity:
+  Max: 8
+
+Metrics/PerceivedComplexity:
+  Max: 8
+
+####################
+# Rails
+####################
+
+Rails/SquishedSQLHeredocs:
+  Enabled: true
+
+Rails/WhereNot:
+  Enabled: true
+
+Rails/SkipsModelValidations:
+  Enabled: true
+
+####################
+# RSpec
+####################
+
+RSpec/ExampleLength:
+  Max: 20
+
+RSpec/MultipleExpectations:
+  Max: 5
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/ContextWording:
+  Prefixes:
+    - 'when'
+    - 'with'
+    - 'without'
+    - 'if'
+
+RSpec/BeEql:
+  Enabled: true
+
+RSpec/EmptyExampleGroup:
+  Enabled: true
+
