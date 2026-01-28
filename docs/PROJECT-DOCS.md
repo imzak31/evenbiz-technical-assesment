@@ -716,7 +716,3 @@ We run Brakeman (static security analyzer) with zero warnings:
 | Request specs | `spec/requests/` |
 
 ---
-
-## Good luck tomorrow! 🚀
-
-Remember: You built this. You understand the trade-offs. Explain *why* you made each decision, not just *what* you did.
