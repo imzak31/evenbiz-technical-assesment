@@ -23,10 +23,9 @@ fi
 # Check if containers are up and wait for them to be healthy
 if ! docker compose ps --status running | grep -q "evenbiz_web"; then
     echo -e "${YELLOW}⚠️  Web container not running. Starting containers...${NC}"
-    docker compose up -d --wait
     
-    # Fallback: poll for container readiness if --wait not supported
-    if [ $? -ne 0 ]; then
+    # Try --wait flag first, fall back to polling if not supported
+    if ! docker compose up -d --wait 2>/dev/null; then
         docker compose up -d
         echo -e "${YELLOW}Waiting for containers to be ready...${NC}"
         retries=30

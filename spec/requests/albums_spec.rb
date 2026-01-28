@@ -89,7 +89,7 @@ RSpec.describe "Albums" do
         }.to change(Album, :count).by(1)
       end
 
-      it "redirects to albums index" do
+      it "redirects to the created album" do
         artist = create(:artist)
         release = create(:release)
         valid_params = {
