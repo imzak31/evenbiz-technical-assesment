@@ -43,11 +43,7 @@ class ArtistsController < ApplicationController
 
   def destroy
     @artist.destroy
-
-    respond_to do |format|
-      format.html { redirect_to artists_path, notice: "Artist was successfully deleted." }
-      format.turbo_stream { flash.now[:notice] = "Artist was successfully deleted." }
-    end
+    redirect_to artists_path, notice: "Artist was successfully deleted."
   end
 
   private

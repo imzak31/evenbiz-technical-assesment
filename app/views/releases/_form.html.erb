@@ -1,4 +1,4 @@
-<%= form_with model: release, class: "space-y-6", data: { controller: "form", action: "submit->form#submit" } do |form| %>
+<%= form_with model: release, class: "space-y-6", data: { controller: "form album-toggle", action: "submit->form#submit" } do |form| %>
   <%= render "shared/form_errors", resource: release %>
 
   <!-- Release Details -->
@@ -19,46 +19,7 @@
     </div>
   </div>
 
-  <!-- Album Details (nested) -->
-  <div class="space-y-4">
-    <h4 class="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">Album Details</h4>
-    
-    <%= form.fields_for :album do |album_form| %>
-      <%= album_form.hidden_field :id if release.album&.persisted? %>
-      
-      <div class="space-y-4">
-        <div>
-          <%= album_form.label :name, "Album Name", class: "block text-sm font-medium text-gray-700" %>
-          <%= album_form.text_field :name, 
-              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-              placeholder: "Enter album name" %>
-        </div>
-
-        <div>
-          <%= album_form.label :duration_in_minutes, "Duration (minutes)", class: "block text-sm font-medium text-gray-700" %>
-          <%= album_form.number_field :duration_in_minutes, 
-              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-              min: 0,
-              placeholder: "e.g., 45" %>
-        </div>
-
-        <div>
-          <%= album_form.label :cover, "Album Cover", class: "block text-sm font-medium text-gray-700" %>
-          <% if release.album&.cover&.attached? %>
-            <div class="mt-2 flex items-center gap-4">
-              <%= image_tag release.album.cover, class: "h-20 w-20 rounded-lg object-cover" %>
-              <div class="text-sm text-gray-500">Current cover</div>
-            </div>
-          <% end %>
-          <%= album_form.file_field :cover, 
-              accept: "image/*",
-              class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-
-  <!-- Artists Selection -->
+  <!-- Artists Selection (moved up so we can use selected artists for album) -->
   <div class="space-y-4">
     <h4 class="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">Artists</h4>
     
@@ -67,16 +28,57 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto border border-gray-200 rounded-md p-3">
         <% Artist.order(:name).each do |artist| %>
           <label class="flex items-center gap-2 text-sm">
-            <%= check_box_tag "release[artist_ids][]", artist.id, 
-                release.artist_ids.include?(artist.id),
-                id: "artist_#{artist.id}",
-                class: "rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" %>
+            <input type="checkbox" 
+                   name="release[artist_ids][]" 
+                   value="<%= artist.id %>"
+                   id="artist_<%= artist.id %>"
+                   class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                   data-album-toggle-target="artistCheckbox"
+                   data-artist-name="<%= artist.name %>"
+                   data-action="change->album-toggle#artistChanged"
+                   <%= 'checked' if release.artist_ids.include?(artist.id) %>>
             <span class="text-gray-700 truncate"><%= artist.name %></span>
           </label>
         <% end %>
       </div>
       <%= hidden_field_tag "release[artist_ids][]", "" %>
     </div>
+  </div>
+
+  <!-- Album Section -->
+  <div class="space-y-4">
+    <h4 class="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">Album</h4>
+    
+    <%= form.fields_for :album, release.album || release.build_album do |album_form| %>
+      <% if release.album&.persisted? %>
+        <%= album_form.hidden_field :id %>
+      <% end %>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Album Owner <span class="text-red-500">*</span></label>
+          <% if release.album&.persisted? %>
+            <!-- When editing, show dropdown with current artists -->
+            <select name="release[album_attributes][artist_id]"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+              <% release.artists.order(:name).each do |artist| %>
+                <option value="<%= artist.id %>" <%= 'selected' if artist.id == release.album.artist_id %>><%= artist.name %></option>
+              <% end %>
+            </select>
+          <% else %>
+            <!-- When creating, dynamically populate from selected artists -->
+            <select name="release[album_attributes][artist_id]"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    data-album-toggle-target="albumArtistSelect">
+              <option value="">Select artists first...</option>
+            </select>
+          <% end %>
+          <p class="mt-1 text-xs text-gray-500">Select which artist owns this album</p>
+        </div>
+
+        <%= render "releases/album_fields", album_form: album_form, release: release %>
+      </div>
+    <% end %>
   </div>
 
   <!-- Actions -->

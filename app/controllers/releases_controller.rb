@@ -45,11 +45,7 @@ class ReleasesController < ApplicationController
 
   def destroy
     @release.destroy
-
-    respond_to do |format|
-      format.html { redirect_to releases_path, notice: "Release was successfully deleted." }
-      format.turbo_stream { flash.now[:notice] = "Release was successfully deleted." }
-    end
+    redirect_to releases_path, notice: "Release was successfully deleted."
   end
 
   private

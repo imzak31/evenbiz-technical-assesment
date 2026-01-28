@@ -18,36 +18,30 @@ class AlbumsController < ApplicationController
   def create
     @album = Album.new(album_params)
 
-    respond_to do |format|
-      if @album.save
+    if @album.save
+      respond_to do |format|
         format.html { redirect_to albums_path, notice: "Album was successfully created." }
-        format.turbo_stream { redirect_to albums_path, notice: "Album was successfully created." }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.turbo_stream { render :new, status: :unprocessable_entity }
+        format.turbo_stream { flash.now[:notice] = "Album was successfully created." }
       end
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   def update
-    respond_to do |format|
-      if @album.update(album_params)
+    if @album.update(album_params)
+      respond_to do |format|
         format.html { redirect_to albums_path, notice: "Album was successfully updated." }
-        format.turbo_stream { redirect_to albums_path, notice: "Album was successfully updated." }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.turbo_stream { render :edit, status: :unprocessable_entity }
+        format.turbo_stream { flash.now[:notice] = "Album was successfully updated." }
       end
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     @album.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to albums_path, notice: "Album was successfully deleted.", status: :see_other }
-      format.turbo_stream
-    end
+    redirect_to albums_path, notice: "Album was successfully deleted."
   end
 
   private
