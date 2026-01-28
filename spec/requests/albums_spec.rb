@@ -71,22 +71,39 @@ RSpec.describe "Albums" do
   end
 
   describe "POST /albums" do
-    let(:album) { create(:album) }
-
-    # Note: The controller doesn't permit release_id but model requires it.
-    # Albums are typically created through releases, so we test the form submission flow.
     context "with valid parameters" do
-      it "creates a new album when release is set via nested attributes" do
-        # Albums are created through releases in the actual app flow
-        # This test verifies the create action handles params correctly
+      it "creates a new album" do
         artist = create(:artist)
         release = create(:release)
-        valid_params = { album: { name: "New Album", duration_in_minutes: 45, artist_id: artist.id } }
+        valid_params = {
+          album: {
+            name: "New Album",
+            duration_in_minutes: 45,
+            artist_id: artist.id,
+            release_id: release.id,
+          },
+        }
 
-        # Since release_id is not permitted, album won't save - this matches reality
         expect {
           post albums_path, params: valid_params
-        }.not_to change(Album, :count)
+        }.to change(Album, :count).by(1)
+      end
+
+      it "redirects to albums index" do
+        artist = create(:artist)
+        release = create(:release)
+        valid_params = {
+          album: {
+            name: "New Album",
+            duration_in_minutes: 45,
+            artist_id: artist.id,
+            release_id: release.id,
+          },
+        }
+
+        post albums_path, params: valid_params
+
+        expect(response).to redirect_to(albums_path)
       end
     end
 
@@ -128,10 +145,10 @@ RSpec.describe "Albums" do
         expect(album.reload.name).to eq("New Name")
       end
 
-      it "redirects to albums index" do
+      it "redirects to the album" do
         patch album_path(album), params: valid_params
 
-        expect(response).to redirect_to(albums_path)
+        expect(response).to redirect_to(album_path(album))
       end
     end
 

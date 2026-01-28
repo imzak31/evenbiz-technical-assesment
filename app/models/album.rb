@@ -9,6 +9,7 @@ class Album < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 255 }
   validates :duration_in_minutes, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :release_id, uniqueness: { message: "already has an album assigned" }
 
   # ==================
   # Query Planners

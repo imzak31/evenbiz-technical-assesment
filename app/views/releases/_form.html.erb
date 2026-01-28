@@ -1,4 +1,4 @@
-<%= form_with model: release, class: "space-y-6", data: { controller: "form album-toggle", action: "submit->form#submit" } do |form| %>
+<%= form_with model: release, class: "space-y-6", data: { controller: "form album-toggle", action: "submit->form#submit", turbo_frame: "_top" } do |form| %>
   <%= render "shared/form_errors", resource: release %>
 
   <!-- Release Details -->
