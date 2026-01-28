@@ -33,8 +33,10 @@ RSpec.describe "Albums" do
     end
 
     context "with search query" do
-      let!(:matching_album) { create(:album, name: "Thriller") }
-      let!(:non_matching_album) { create(:album, name: "Abbey Road") }
+      before do
+        create(:album, name: "Thriller")
+        create(:album, name: "Abbey Road")
+      end
 
       it "filters albums by search query" do
         get albums_path, params: { search: "Thriller" }

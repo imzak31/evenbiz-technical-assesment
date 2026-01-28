@@ -24,7 +24,7 @@ RSpec.describe Search::AlbumsSearch do
       end
     end
 
-    context "matching album name" do
+    context "when matching album name" do
       it "finds album by exact name" do
         matching = create(:album, name: "Thriller")
         _non_matching = create(:album, name: "Abbey Road")
@@ -51,7 +51,7 @@ RSpec.describe Search::AlbumsSearch do
       end
     end
 
-    context "matching artist name" do
+    context "when matching artist name" do
       it "finds album by artist name" do
         artist = create(:artist, name: "Michael Jackson")
         matching = create(:album, name: "Thriller", artist: artist)
@@ -102,7 +102,7 @@ RSpec.describe Search::AlbumsSearch do
       end
     end
 
-    context "matching either album or artist" do
+    context "when matching either album or artist" do
       it "returns albums matching name OR artist" do
         artist_with_matching_name = create(:artist, name: "Thunder")
         album_by_name = create(:album, name: "Thunder Road")

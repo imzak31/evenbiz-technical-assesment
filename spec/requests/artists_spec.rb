@@ -34,8 +34,10 @@ RSpec.describe "Artists" do
     end
 
     context "with search query" do
-      let!(:matching_artist) { create(:artist, name: "The Beatles") }
-      let!(:non_matching_artist) { create(:artist, name: "Pink Floyd") }
+      before do
+        create(:artist, name: "The Beatles")
+        create(:artist, name: "Pink Floyd")
+      end
 
       it "filters artists by search query" do
         get artists_path, params: { search: "Beatles" }

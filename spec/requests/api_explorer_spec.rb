@@ -45,7 +45,7 @@ RSpec.describe "ApiExplorer" do
         post api_explorer_execute_path, params: {
           endpoint: "/v1/artists",
           page: "2",
-          per_page: "3"
+          per_page: "3",
         }
 
         expect(response).to have_http_status(:ok)
@@ -54,7 +54,7 @@ RSpec.describe "ApiExplorer" do
       it "passes search parameters" do
         post api_explorer_execute_path, params: {
           endpoint: "/v1/artists",
-          search: "test"
+          search: "test",
         }
 
         expect(response).to have_http_status(:ok)
@@ -78,7 +78,7 @@ RSpec.describe "ApiExplorer" do
       it "supports past filter" do
         post api_explorer_execute_path, params: {
           endpoint: "/v1/releases",
-          past: "true"
+          past: "true",
         }
 
         expect(response).to have_http_status(:ok)

@@ -3,6 +3,7 @@
 require "rails_helper"
 require "webmock/rspec"
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Api::HttpClient do
   let(:token) { "test_token_123" }
   let(:host) { "http://localhost:3000" }
@@ -33,8 +34,8 @@ RSpec.describe Api::HttpClient do
     context "with successful response" do
       let(:response_body) do
         {
-          "data" => [{ "id" => 1, "name" => "Test Release" }],
-          "meta" => { "current_page" => 1, "total_pages" => 1 }
+          "data" => [ { "id" => 1, "name" => "Test Release" } ],
+          "meta" => { "current_page" => 1, "total_pages" => 1 },
         }
       end
 
@@ -42,7 +43,7 @@ RSpec.describe Api::HttpClient do
         stub_request(:get, api_url)
           .with(headers: {
             "Authorization" => "Bearer #{token}",
-            "Accept" => "application/json"
+            "Accept" => "application/json",
           })
           .to_return(
             status: 200,
@@ -247,3 +248,4 @@ RSpec.describe Api::HttpClient do
     end
   end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers

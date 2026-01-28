@@ -38,12 +38,11 @@ RSpec.describe "Releases" do
     end
 
     context "with search query" do
-      let(:artist) { create(:artist, name: "Search Artist") }
-      let!(:matching_release) do
+      before do
+        artist = create(:artist, name: "Search Artist")
         release = create(:release, name: "Matching Album")
         create(:album, release: release)
         create(:artist_release, artist: artist, release: release)
-        release
       end
 
       it "filters releases by search query" do
@@ -89,13 +88,13 @@ RSpec.describe "Releases" do
         release: {
           name: "New Release",
           released_at: 1.week.from_now.to_date,
-          artist_ids: [artist.id],
+          artist_ids: [ artist.id ],
           album_attributes: {
             name: "New Album",
             duration_in_minutes: 45,
-            artist_id: artist.id
-          }
-        }
+            artist_id: artist.id,
+          },
+        },
       }
     end
 

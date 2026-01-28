@@ -32,7 +32,7 @@ RSpec.describe Search::ReleasesSearch do
       end
     end
 
-    context "matching release name" do
+    context "when matching release name" do
       it "finds release by exact name" do
         matching = create(:release, name: "Thriller")
         _non_matching = create(:release, name: "Abbey Road")
@@ -59,7 +59,7 @@ RSpec.describe Search::ReleasesSearch do
       end
     end
 
-    context "matching artist name" do
+    context "when matching artist name" do
       it "finds release by artist name" do
         matching = create_release_with_artist(
           release_name: "Thriller",
@@ -140,7 +140,7 @@ RSpec.describe Search::ReleasesSearch do
       end
     end
 
-    context "matching either release or artist" do
+    context "when matching either release or artist" do
       it "returns releases matching name OR artist" do
         release_by_name = create(:release, name: "Thunder Road")
         release_by_artist = create_release_with_artist(
