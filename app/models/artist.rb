@@ -6,4 +6,17 @@ class Artist < ApplicationRecord
   has_many :releases, through: :artist_releases
 
   validates :name, presence: true, uniqueness: true, length: { maximum: 255 }
+
+  # ==================
+  # Query Planners
+  # ==================
+
+  # Minimal select for embedding in other serializations
+  scope :for_embed, -> { select(:id, :name) }
+
+  # Eager loads associations for index listing
+  scope :for_index, -> { includes(:releases).order(:name) }
+
+  # Filter by release participation
+  scope :for_release, ->(release_id) { joins(:artist_releases).where(artist_releases: { release_id: release_id }) }
 end
