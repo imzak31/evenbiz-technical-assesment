@@ -58,7 +58,7 @@ RSpec.describe "Albums" do
     it "displays album details" do
       get album_path(album)
 
-      expect(response.body).to include(album.name)
+      expect(response.body).to include(CGI.escapeHTML(album.name))
     end
   end
 
