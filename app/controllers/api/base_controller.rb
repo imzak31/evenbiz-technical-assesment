@@ -6,7 +6,6 @@ module Api
   # Uses token-based authentication
   class BaseController < ActionController::API
     include TokenAuthentication
-    include ApiResponder
     include ParameterSanitizer
     include JsonApiResponder
 
