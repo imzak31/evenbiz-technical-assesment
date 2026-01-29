@@ -149,7 +149,6 @@ RSpec.describe "Api::Releases" do
           get "/api/releases", headers: headers
         end
 
-
         it "includes album resources" do
           albums = included.select { |r| r["type"] == "albums" }
           expect(albums).not_to be_empty

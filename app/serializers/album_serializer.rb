@@ -16,7 +16,9 @@ class AlbumSerializer
     end
   end
 
-  belongs_to :artist, serializer: ArtistSerializer
+  # Note: Album's artist relationship is intentionally omitted here.
+  # Artists are included via ReleaseSerializer's has_many :artists relationship.
+  # Including it here would cause duplicate artist entries in the 'included' array.
 
   link :self do |album|
     "/api/albums/#{album.id}"
