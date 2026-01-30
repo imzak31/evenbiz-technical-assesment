@@ -6,10 +6,10 @@ module Api
   # Uses token-based authentication
   class BaseController < ActionController::API
     include TokenAuthentication
-    include ApiResponder
     include ParameterSanitizer
+    include JsonApiResponder
 
-    # Rescue common errors with JSON responses
+    # Rescue common errors with JSON:API formatted responses
     rescue_from ActiveRecord::RecordNotFound, with: :not_found
     rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
     rescue_from ActionController::ParameterMissing, with: :bad_request
@@ -17,15 +17,15 @@ module Api
     private
 
     def not_found
-      render json: { errors: [ "Record not found" ] }, status: :not_found
+      render_jsonapi_error("Record not found", :not_found)
     end
 
     def unprocessable_entity(exception)
-      render json: { errors: exception.record.errors.full_messages }, status: :unprocessable_entity
+      render_jsonapi_errors(exception.record.errors.full_messages, :unprocessable_entity)
     end
 
     def bad_request(exception)
-      render json: { errors: [ exception.message ] }, status: :bad_request
+      render_jsonapi_error(exception.message, :bad_request)
     end
   end
 end
